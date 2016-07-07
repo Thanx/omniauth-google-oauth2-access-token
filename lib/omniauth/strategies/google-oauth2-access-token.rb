@@ -22,7 +22,7 @@ module OmniAuth
       option :client_secret, nil
 
       option :access_token_options, {
-        :header_format => 'OAuth %s',
+        :header_format => 'Bearer %s',
         :param_name => 'access_token'
       }
 
@@ -66,7 +66,7 @@ module OmniAuth
       end
 
       def raw_info
-        @raw_info ||= access_token.get('https://www.googleapis.com/oauth2/v1/userinfo').parsed
+        @raw_info ||= access_token.get('https://www.googleapis.com/oauth2/v2/userinfo').parsed
       end
 
       def client
