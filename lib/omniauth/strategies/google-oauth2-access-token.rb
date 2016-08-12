@@ -81,6 +81,10 @@ module OmniAuth
       end
 
       def callback_phase
+        if !request.params['auth_code'].to_s.empty? && request.params['access_token'].to_s.empty?
+          request.params['access_token'] = exchange_code(request.params['auth_code'])
+        end
+
         if !request.params['access_token'] || request.params['access_token'].to_s.empty?
           raise ArgumentError.new("No access token provided.")
         end
@@ -161,6 +165,20 @@ module OmniAuth
           :access_token => access_token
         }).parsed
         raw_response['issued_to'] == options.client_id
+      end
+
+      def exchange_code(auth_code)
+        raw_response = client.request(
+          :post,
+          'https://www.googleapis.com/oauth2/v4/token',
+          params: {
+            code:          auth_code,
+            client_id:     ENV['GOOGLE_CLIENT_ID'],
+            client_secret: ENV['GOOGLE_CLIENT_SECRET'],
+            grant_type:    'authorization_code'
+          }
+        ).parsed
+        raw_response['access_token']
       end
 
     end
