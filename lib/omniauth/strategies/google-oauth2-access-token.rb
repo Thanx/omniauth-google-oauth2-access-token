@@ -80,6 +80,10 @@ module OmniAuth
         form.to_response
       end
 
+      def credentials
+        { token: self.access_token.token }
+      end
+
       def callback_phase
         if !request.params['auth_code'].to_s.empty? && request.params['access_token'].to_s.empty?
           request.params['access_token'] = exchange_code(request.params['auth_code'])
